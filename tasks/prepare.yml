@@ -1,0 +1,80 @@
+---
+
+- name: include OS specific configuration ({{ ansible_distribution }} ({{ ansible_os_family }}) {{ ansible_distribution_major_version }})
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      paths:
+        - "vars"
+      files:
+        # eg. debian-10 / ubuntu-20.04 / centos-8 / oraclelinux-8
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+        # eg. archlinux-systemd / archlinux-openrc
+        - "{{ ansible_distribution | lower }}-{{ ansible_service_mgr | lower }}.yml"
+        # eg. debian / ubuntu / centos / oraclelinux
+        - "{{ ansible_distribution | lower }}.yml"
+        # eg. redhat / debian / archlinux
+        - "{{ ansible_os_family | lower }}.yml"
+        - default.yaml
+      skip: true
+
+- name: update package cache
+  package:
+    update_cache: true
+
+- name: install dependency
+  package:
+    name: "{{ mysql_exporter_requirements }}"
+    state: present
+
+- name: detect installed mysql_exporter version
+  stat:
+    path: "{{ mysql_exporter_install_path }}/mysql-exporter"
+  register: stat_mysql_exporter_binary
+
+- name: create local tmp directory
+  become: false
+  delegate_to: 127.0.0.1
+  file:
+    path: "{{ mysql_exporter_local_tmp_directory }}"
+    state: directory
+    mode: 0750
+
+- name: Create mysql_exporter group
+  group:
+    name: "{{ mysql_exporter_system_group }}"
+    state: present
+    system: true
+  when:
+    - mysql_exporter_system_group != "root"
+
+- name: Create mysql_exporter user
+  user:
+    name: "{{ mysql_exporter_system_user }}"
+    groups: "{{ mysql_exporter_system_group }}"
+    append: true
+    shell: /usr/sbin/nologin
+    system: true
+    createhome: false
+    home: /nonexistent
+  when:
+    - mysql_exporter_system_user != "root"
+
+- name: create install directory
+  file:
+    path: "{{ mysql_exporter_install_path }}"
+    state: directory
+    owner: "{{ mysql_exporter_system_user }}"
+    group: "{{ mysql_exporter_system_group }}"
+    mode: 0755
+
+- name: fix directory rights for {{ mysql_exporter_install_path | dirname }}
+  file:
+    path: "{{ mysql_exporter_install_path | dirname }}"
+    state: directory
+    owner: "{{ mysql_exporter_system_user }}"
+    group: "{{ mysql_exporter_system_group }}"
+    mode: 0755
+    recurse: true
+
+...

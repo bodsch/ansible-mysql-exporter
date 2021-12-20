@@ -1,0 +1,13 @@
+---
+
+- name: restart {{ mysql_exporter_service_name }} if needed
+  meta: flush_handlers
+
+- name: ensure {{ mysql_exporter_service_name }} is enabled on boot
+  become: true
+  service:
+    name: "{{ mysql_exporter_service_name }}"
+    enabled: true
+    state: started
+
+...

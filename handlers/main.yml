@@ -1,0 +1,21 @@
+---
+
+- name: restart mysql_exporter
+  become: true
+  service:
+    name: "{{ mysql_exporter_service_name }}"
+    state: restarted
+
+- name: reload mysql-exporter
+  become: true
+  service:
+    name: "{{ mysql_exporter_service_name }}"
+    state: reloaded
+
+- name: daemon-reload
+  become: true
+  systemd:
+    daemon_reload: true
+    force: true
+
+...

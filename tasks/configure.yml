@@ -1,0 +1,22 @@
+---
+
+- name: create mysql_exporter configuration directories
+  file:
+    path: "{{ mysql_exporter_config_dir }}"
+    state: directory
+    owner: root
+    group: "{{ mysql_exporter_system_group }}"
+    mode: 0775
+
+- name: create mysql_exporter configuration
+  template:
+    src: "defaults/mysql-exporter.j2"
+    dest: "{{ mysql_exporter_config_dir }}/mysql-exporter"
+    force: true
+    owner: root
+    group: "{{ mysql_exporter_system_group }}"
+    mode: 0640
+  notify:
+    - restart mysql_exporter
+
+...

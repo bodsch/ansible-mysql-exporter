@@ -1,0 +1,16 @@
+---
+
+- include_tasks: prepare.yml
+
+- name: download archives
+  include_tasks: download.yml
+  when:
+    - not stat_mysql_exporter_binary.stat.exists
+
+- include_tasks: install.yml
+
+- include_tasks: configure.yml
+
+- include_tasks: service.yml
+
+...

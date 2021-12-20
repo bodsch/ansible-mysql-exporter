@@ -1,0 +1,33 @@
+---
+
+mysql_exporter_version: "0.13.0"
+
+# /download/v0.13.0/mysqld_exporter-0.13.0.linux-amd64.tar.gz
+
+mysql_exporter_release_download_url: https://github.com/prometheus/mysqld_exporter/releases
+
+mysql_exporter_system_user: mysql_exporter
+mysql_exporter_system_group: mysql_exporter
+
+mysql_exporter_service_name: "mysql-exporter"
+
+mysql_exporter_listen_address: 127.0.0.1
+mysql_exporter_listen_port: 9104
+mysql_exporter_telemetry_path: /metrics
+
+mysql_exporter_config:
+  data_source_name: "monitoring:8WOMmRWWYHPR@unix(/run/mysqld/mysqld.sock)/"
+
+mysql_exporter_logging:
+  # debug, info, warn, error, fatal
+  level: debug
+  # Unklare definition.
+  # sollte nicht benutzt werden
+  # "logger:syslog?appname=bob&local=7" or "logger:stdout?json=true"
+  # format: logger:stderr
+
+mysql_exporter_enabled_collectors: []
+#  - global_variables
+#  - engine_innodb_status
+
+...
