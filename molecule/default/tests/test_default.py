@@ -98,29 +98,18 @@ def get_vars(host):
     return result
 
 
-def test_package(host, get_vars):
-    """
-    """
-    packages = get_vars.get("loki_packages")
-    install_path = get_vars.get("loki_install_path")
-
-    for pack in packages:
-        f = host.file("{}/{}".format(install_path, pack))
-        assert f.exists
-        assert f.is_file
-
-
-@pytest.mark.parametrize("dirs", [
-    "/etc/loki",
+@pytest.mark.parametrize("directories", [
+    "/etc/mysql_exporter",
+    "/usr/local/bin/mysql_exporter"
 ])
-def test_directories(host, dirs):
-    d = host.file(dirs)
+def test_directories(host, directories):
+    d = host.file(directories)
     assert d.is_directory
     assert d.exists
 
 
 @pytest.mark.parametrize("files", [
-    "/etc/loki/loki.yml"
+    "/etc/mysql_exporter/mysql-exporter"
 ])
 def test_files(host, files):
     f = host.file(files)
@@ -128,15 +117,18 @@ def test_files(host, files):
     assert f.is_file
 
 
-def test_user(host):
-    assert host.group("loki").exists
-    assert host.user("loki").exists
-    assert "loki" in host.user("loki").groups
-    assert host.user("loki").home == "/nonexistent"
+def test_user(host, get_vars):
+    username = get_vars.get("mysql_exporter_system_user")
+    groupname = get_vars.get("mysql_exporter_system_group")
+
+    assert host.group(groupname).exists
+    assert host.user(username).exists
+    assert groupname in host.user(username).groups
+    assert host.user(username).home == "/nonexistent"
 
 
 def test_service(host, get_vars):
-    service = host.service("loki")
+    service = host.service("mysql-exporter")
     assert service.is_enabled
     assert service.is_running
 
@@ -145,8 +137,8 @@ def test_open_port(host, get_vars):
     for i in host.socket.get_listening_sockets():
         print(i)
 
-    address = get_vars.get("loki_listen_address")
-    port = get_vars.get("loki_listen_port")
+    address = get_vars.get("mysql_exporter_listen_address")
+    port = get_vars.get("mysql_exporter_listen_port")
 
     service = host.socket("tcp://{0}:{1}".format(address, port))
     assert service.is_listening
