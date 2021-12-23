@@ -23,7 +23,7 @@ ExecStart        = /usr/bin/mysql-exporter \
     --collect.{{ name }}.{{ k }}={{ v | quote }} \
 {%     endfor -%}
 {%   endif -%}
-{% endfor -%}
+{% endfor %}
     --log.level={{ mysql_exporter_logging.level | default('info') }} \
 {% if mysql_exporter_logging.format is defined %}
     --log.format="{{ mysql_exporter_logging.format }}" \

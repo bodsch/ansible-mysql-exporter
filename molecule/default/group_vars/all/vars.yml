@@ -1,0 +1,14 @@
+---
+
+mysql_exporter_config:
+  data_source_name: "monitoring:8WOMmRWWYHPR@unix(/run/mysqld/mysqld.sock)/"
+
+mysql_exporter_logging:
+  # debug, info, warn, error, fatal
+  level: debug
+
+mysql_exporter_enabled_collectors:
+  - global_variables
+  - engine_innodb_status
+
+...
