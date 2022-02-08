@@ -16,10 +16,15 @@ Ansible role to install and configure [mysqld_exporter](https://github.com/prome
 
 Tested on
 
-* Debian 10 / 11
-* Ubuntu 20.04
-* CentOS 8
-* OracleLinux 8
+* Debian based
+    - Debian 10 / 11
+    - Ubuntu 20.04
+* RedHat based
+    - CentOS 8 (**not longer supported**)
+    - Alma Linux 8
+    - Rocky Linux 8
+    - OracleLinux 8
+* ArchLinux
 
 ## Contribution
 

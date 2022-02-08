@@ -1,0 +1,6 @@
+---
+
+mysql_exporter_requirements:
+  - iproute
+
+...
