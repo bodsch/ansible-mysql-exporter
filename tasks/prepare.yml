@@ -18,6 +18,15 @@
         - default.yaml
       skip: true
 
+- name: define delegate instance for download handling
+  set_fact:
+    mysql_exporter_delegate_to: "{{ ansible_host }}"
+    mysql_exporter_local_tmp_directory: "{{
+        lookup('env', 'CUSTOM_LOCAL_TMP_DIRECTORY') |
+        default('/var/cache/ansible/mysql_exporter', true) }}/{{ mysql_exporter_version }}"
+  when:
+    - mysql_exporter_direct_download
+
 - name: update package cache
   package:
     update_cache: true
@@ -32,31 +41,31 @@
     path: "{{ mysql_exporter_install_path }}/mysql-exporter"
   register: stat_mysql_exporter_binary
 
-- name: create local tmp directory
+- name: create download directory
   become: false
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ mysql_exporter_delegate_to }}"
   file:
     path: "{{ mysql_exporter_local_tmp_directory }}"
     state: directory
     mode: 0750
 
-- name: Create mysql_exporter group
-  group:
-    name: "{{ mysql_exporter_system_group }}"
-    state: present
-    system: true
-  when:
-    - mysql_exporter_system_group != "root"
+- name: user and group handling
+  block:
+    - name: Create mysql_exporter group
+      group:
+        name: "{{ mysql_exporter_system_group }}"
+        state: present
+        system: true
 
-- name: Create mysql_exporter user
-  user:
-    name: "{{ mysql_exporter_system_user }}"
-    groups: "{{ mysql_exporter_system_group }}"
-    append: true
-    shell: /usr/sbin/nologin
-    system: true
-    createhome: false
-    home: /nonexistent
+    - name: Create mysql_exporter user
+      user:
+        name: "{{ mysql_exporter_system_user }}"
+        groups: "{{ mysql_exporter_system_group }}"
+        append: true
+        shell: /usr/sbin/nologin
+        system: true
+        createhome: false
+        home: /nonexistent
   when:
     - mysql_exporter_system_user != "root"
 

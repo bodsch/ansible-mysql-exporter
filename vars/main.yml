@@ -4,6 +4,8 @@ mysql_exporter_main_version: "{{ mysql_exporter_version[0:3] }}"
 
 mysql_exporter_install_path: /usr/local/bin/mysql_exporter/{{ mysql_exporter_version }}
 
+mysql_exporter_delegate_to: localhost
+
 mysql_exporter_local_tmp_directory: "{{
   lookup('env', 'CUSTOM_LOCAL_TMP_DIRECTORY') |
   default(lookup('env', 'HOME') ~ '/.cache/ansible/mysql_exporter', true) }}/{{ mysql_exporter_version }}"
