@@ -3,19 +3,23 @@
 
 Ansible role to install and configure [mysqld_exporter](https://github.com/prometheus/mysqld_exporter).
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/bodsch/ansible-mysql-exporter/CI)][ci]
+
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-mysql-exporter/main.yml?branch=main)][ci]
 [![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-mysql-exporter)][issues]
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-mysql-exporter)][releases]
+[![Ansible Quality Score](https://img.shields.io/ansible/quality/50067?label=role%20quality)][quality]
 
 [ci]: https://github.com/bodsch/ansible-mysql-exporter/actions
 [issues]: https://github.com/bodsch/ansible-mysql-exporter/issues?q=is%3Aopen+is%3Aissue
 [releases]: https://github.com/bodsch/ansible-mysql-exporter/releases
+[quality]: https://galaxy.ansible.com/bodsch/dovecot
 
 
 ## Operating systems
 
 Tested on
 
+* ArchLinux
 * Debian based
     - Debian 10 / 11
     - Ubuntu 20.04
@@ -24,7 +28,6 @@ Tested on
     - Alma Linux 8
     - Rocky Linux 8
     - OracleLinux 8
-* ArchLinux
 
 ## Contribution
 
@@ -45,8 +48,6 @@ mysql_exporter_release_download_url: https://github.com/prometheus/mysqld_export
 
 mysql_exporter_system_user: mysql_exporter
 mysql_exporter_system_group: mysql_exporter
-
-mysql_exporter_service_name: "mysql-exporter"
 
 mysql_exporter_listen_address: 127.0.0.1
 mysql_exporter_listen_port: 9104

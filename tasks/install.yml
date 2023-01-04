@@ -1,14 +1,41 @@
 ---
 
-- name: create systemd service unit
-  template:
-    src: "init/systemd/mysql-exporter.service.j2"
-    dest: "{{ systemd_lib_directory }}/mysql-exporter.service"
-    owner: root
-    group: root
-    mode: 0644
-  notify:
-    - daemon-reload
-    - restart mysql_exporter
+
+- name: systemd
+  when:
+    - ansible_service_mgr | lower == "systemd"
+  block:
+    - name: create systemd service unit
+      ansible.builtin.template:
+        src: "init/systemd/mysql-exporter.service.j2"
+        dest: "{{ systemd_lib_directory }}/mysql-exporter.service"
+        owner: root
+        group: root
+        mode: 0644
+      notify:
+        - daemon-reload
+        - restart mysql_exporter
+
+    - name: create mysql-exporter run configuration
+      ansible.builtin.template:
+        src: "default/mysql-exporter.j2"
+        dest: "{{ mysql_exporter_defaults_directory }}/mysql-exporter"
+        force: true
+        owner: root
+        group: "{{ mysql_exporter_system_group }}"
+        mode: 0640
+      notify:
+        - restart mysql_exporter
+
+# - name: create systemd service unit
+#   ansible.builtin.template:
+#     src: "init/systemd/mysql-exporter.service.j2"
+#     dest: "{{ systemd_lib_directory }}/mysql-exporter.service"
+#     owner: root
+#     group: root
+#     mode: 0644
+#   notify:
+#     - daemon-reload
+#     - restart mysql_exporter
 
 ...

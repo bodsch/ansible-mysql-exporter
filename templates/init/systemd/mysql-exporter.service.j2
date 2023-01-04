@@ -1,38 +1,20 @@
 {{ ansible_managed | comment }}
 
 [Unit]
-Description      = Prometheus exporter for MySQL server
-Documentation    = https://github.com/prometheus/mysqld_exporter
-After            = network-online.target
+Description       = Prometheus exporter for MySQL server
+Documentation     = https://github.com/prometheus/mysqld_exporter
+After             = network-online.target
 
 [Service]
-Type             = simple
-User             = {{ mysql_exporter_system_user }}
-Group            = {{ mysql_exporter_system_group }}
+Type              = simple
+User              = {{ mysql_exporter_system_user }}
+Group             = {{ mysql_exporter_system_group }}
 
-# EnvironmentFile  = {{ mysql_exporter_config_dir }}/mysql-exporter
-Environment      = "DATA_SOURCE_NAME={{ mysql_exporter_config.data_source_name }}"
-ExecStart        = /usr/bin/mysql-exporter \
-{% for collector in mysql_exporter_enabled_collectors -%}
-{%   if not collector is mapping %}
-    --collect.{{ collector }} \
-{%   else -%}
-{%     set name, options = (collector.items()|list)[0] -%}
-    --collect.{{ name }} \
-{%     for k,v in options | dictsort %}
-    --collect.{{ name }}.{{ k }}={{ v | quote }} \
-{%     endfor -%}
-{%   endif -%}
-{% endfor %}
-    --log.level={{ mysql_exporter_logging.level | default('info') }} \
-{% if mysql_exporter_logging.format is defined %}
-    --log.format="{{ mysql_exporter_logging.format }}" \
-{% endif %}
-    --web.listen-address={{ mysql_exporter_listen_address }}:{{ mysql_exporter_listen_port }} \
-    --web.telemetry-path={{ mysql_exporter_telemetry_path }}
+EnvironmentFile   = {{ mysql_exporter_defaults_directory }}/mysql-exporter
+ExecStart         = /usr/bin/mysql-exporter $OPTIONS
 
-SyslogIdentifier = {{ mysql_exporter_service_name }}
-Restart          = always
+SyslogIdentifier  = mysql-exporter
+Restart           = always
 
 [Install]
-WantedBy=multi-user.target
+WantedBy          = multi-user.target

@@ -5,22 +5,23 @@ galaxy_info:
   namespace: bodsch
 
   author: Bodo Schulz
-  description: ansible role to setup mysql_exporte
+  description: ansible role to setup mysql_exporter
+
   license: Apache
-  min_ansible_version: 2.9
+  min_ansible_version: "2.9"
 
   platforms:
-    - name: Ubuntu
-      versions:
-        # 20.04
-        - focal
+    - name: ArchLinux
     - name: Debian
       versions:
         # 10
         - buster
         # 11
         - bullseye
-    - name: ArchLinux
+    - name: Ubuntu
+      versions:
+        # 20.04
+        - focal
 
   galaxy_tags:
     - mysql

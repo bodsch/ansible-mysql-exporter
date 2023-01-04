@@ -2,20 +2,22 @@
 
 - name: restart mysql_exporter
   become: true
-  service:
-    name: "{{ mysql_exporter_service_name }}"
+  ansible.builtin.service:
+    name: mysql-exporter
     state: restarted
 
 - name: reload mysql-exporter
   become: true
-  service:
-    name: "{{ mysql_exporter_service_name }}"
+  ansible.builtin.service:
+    name: mysql-exporter
     state: reloaded
 
 - name: daemon-reload
   become: true
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
     force: true
+  when:
+    - ansible_service_mgr | lower == "systemd"
 
 ...

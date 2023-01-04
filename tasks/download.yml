@@ -3,9 +3,11 @@
 - name: download mysql_exporter binary to local folder
   become: false
   delegate_to: "{{ mysql_exporter_delegate_to }}"
-  get_url:
+  run_once: "{{ 'false' if mysql_exporter_direct_download else 'true' }}"
+  ansible.builtin.get_url:
     url: "{{ mysql_exporter_release_download_url }}/download/v{{ mysql_exporter_version }}/mysqld_exporter-{{ mysql_exporter_version }}.linux-amd64.tar.gz"
     dest: "{{ mysql_exporter_local_tmp_directory }}/mysql_exporter-linux-amd64.tar.gz"
+    mode: 0640
   register: _download_archive
   until: _download_archive is succeeded
   retries: 4
@@ -15,7 +17,8 @@
 - name: extract mysql_exporter archive
   become: false
   delegate_to: "{{ mysql_exporter_delegate_to }}"
-  unarchive:
+  run_once: "{{ 'false' if mysql_exporter_direct_download else 'true' }}"
+  ansible.builtin.unarchive:
     src: "{{ mysql_exporter_local_tmp_directory }}/mysql_exporter-linux-amd64.tar.gz"
     dest: "{{ mysql_exporter_local_tmp_directory }}/"
     copy: false
@@ -23,36 +26,34 @@
 - name: detect binary file for mysql_exporter
   become: false
   delegate_to: "{{ mysql_exporter_delegate_to }}"
-  stat:
+  run_once: "{{ 'false' if mysql_exporter_direct_download else 'true' }}"
+  ansible.builtin.stat:
     path: "{{ mysql_exporter_local_tmp_directory }}/mysqld_exporter-{{ mysql_exporter_version }}.linux-amd64/mysqld_exporter"
   register: stat_file_binary
 
 - name: fail when extracted binary are missing
-  fail:
+  ansible.builtin.fail:
     msg: "missing extracted binary on ansible controller"
   when:
     - not stat_file_binary.stat.exists
 
-- block:
-    - name: propagate mysql_exporter binaries
-      copy:
-        src: "{{ mysql_exporter_local_tmp_directory }}/mysqld_exporter-{{ mysql_exporter_version }}.linux-amd64/mysqld_exporter"
-        dest: "{{ mysql_exporter_install_path }}/mysql-exporter"
-        mode: 0755
-        owner: "{{ mysql_exporter_system_user }}"
-        group: "{{ mysql_exporter_system_group }}"
+- name: propagate mysql_exporter binaries
+  ansible.builtin.copy:
+    src: "{{ mysql_exporter_local_tmp_directory }}/mysqld_exporter-{{ mysql_exporter_version }}.linux-amd64/mysqld_exporter"
+    dest: "{{ mysql_exporter_install_path }}/mysql-exporter"
+    mode: 0755
+    owner: "{{ mysql_exporter_system_user }}"
+    group: "{{ mysql_exporter_system_group }}"
 
-    - name: make files executable
-      file:
-        path: "{{ mysql_exporter_install_path }}/mysql-exporter"
-        mode: 0755
-        owner: "{{ mysql_exporter_system_user }}"
-        group: "{{ mysql_exporter_system_group }}"
-  when:
-    - stat_file_binary.stat.exists
+- name: make files executable
+  ansible.builtin.file:
+    path: "{{ mysql_exporter_install_path }}/mysql-exporter"
+    mode: 0755
+    owner: "{{ mysql_exporter_system_user }}"
+    group: "{{ mysql_exporter_system_group }}"
 
 - name: create link to binary
-  file:
+  ansible.builtin.file:
     src: "{{ mysql_exporter_install_path }}/mysql-exporter"
     dest: /usr/bin/mysql-exporter
     state: link

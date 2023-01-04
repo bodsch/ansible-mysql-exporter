@@ -1,9 +1,11 @@
 ---
 
-mysql_exporter_logging:
-  level: debug
+mysql_exporter_version: latest
 
 mysql_exporter_config:
   data_source_name: "monitoring:8WOMmRWWYHPR@unix(/run/mysqld/mysqld.sock)/"
+
+mysql_exporter_logging:
+  level: debug
 
 ...

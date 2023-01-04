@@ -1,16 +1,20 @@
 ---
 
-- include_tasks: prepare.yml
+- name: prepare
+  ansible.builtin.include_tasks: prepare.yml
 
-- name: download archives
-  include_tasks: download.yml
+- name: download
+  ansible.builtin.include_tasks: download.yml
   when:
     - not stat_mysql_exporter_binary.stat.exists
 
-- include_tasks: install.yml
+- name: install
+  ansible.builtin.include_tasks: install.yml
 
-- include_tasks: configure.yml
+- name: configure
+  ansible.builtin.include_tasks: configure.yml
 
-- include_tasks: service.yml
+- name: service
+  ansible.builtin.include_tasks: service.yml
 
 ...

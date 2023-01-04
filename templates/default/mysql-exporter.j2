@@ -1,4 +1,5 @@
-{{ ansible_managed | comment }}
+#jinja2: trim_blocks: True, lstrip_blocks: True
+# {{ ansible_managed }}
 
 # By default the connection string will be read from
 # $HOME/my.cnf or from the file specified with the -config.my-cnf parameter.
@@ -8,7 +9,7 @@
 
 # Using UNIX domain sockets and authentication:
 #   prometheus:nopassword@unix(/run/mysqld/mysqld.sock)/"
-DATA_SOURCE_NAME="{{ mysql_exporter_config.data_source_name }}
+DATA_SOURCE_NAME="{{ mysql_exporter_config.data_source_name }}"
 
 # Using a TCP connection and password authentication:
 # DATA_SOURCE_NAME="login:password@(hostname:port)/dbname"
@@ -21,24 +22,27 @@ DATA_SOURCE_NAME="{{ mysql_exporter_config.data_source_name }}
 
 # Set the command-line arguments to pass to the exporter.
 
-ARGS='
-  --log.level={{ mysql_exporter_logging.level | default('info') }} \
-{% if mysql_exporter_logging.format is defined %}
-  --log.format="{{ mysql_exporter_logging.format }}" \
-{% endif %}
+OPTIONS="
 {% for collector in mysql_exporter_enabled_collectors -%}
 {%   if not collector is mapping %}
-  --collect.{{ collector }} \
+    --collect.{{ collector }} \
 {%   else -%}
-{%     set name, options = (collector.items()|list)[0] -%}
-  --collect.{{ name }} \
+{%     set name, options = (collector.items() | list)[0] -%}
+    --collect.{{ name }} \
 {%     for k,v in options | dictsort %}
-  --collect.{{ name }}.{{ k }}={{ v | quote }} \
+    --collect.{{ name }}.{{ k }}={{ v | quote }} \
 {%     endfor -%}
 {%   endif -%}
-{% endfor -%}'
+{% endfor %}
+    --log.level={{ mysql_exporter_logging.level | default('info') }} \
+{% if mysql_exporter_logging.format is defined %}
+    --log.format="{{ mysql_exporter_logging.format }}" \
+{% endif %}
+    --web.listen-address={{ mysql_exporter_listen_address }}:{{ mysql_exporter_listen_port }} \
+    --web.telemetry-path={{ mysql_exporter_telemetry_path }}
+"
 
-
+{#
 # ARGS='-config.my-cnf /etc/mysql/debian.cnf'
 
 # Usage of prometheus-mysqld-exporter:
@@ -140,3 +144,4 @@ ARGS='
 #  --log.format="logger:stderr"
 #       Set the log target and format. Example:
 #       "logger:syslog?appname=bob&local=7" or "logger:stdout?json=true"
+#}

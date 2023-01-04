@@ -9,8 +9,6 @@ mysql_exporter_system_group: mysql_exporter
 
 mysql_exporter_direct_download: false
 
-mysql_exporter_service_name: "mysql-exporter"
-
 mysql_exporter_listen_address: 127.0.0.1
 mysql_exporter_listen_port: 9104
 mysql_exporter_telemetry_path: /metrics
