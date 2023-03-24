@@ -106,13 +106,17 @@
     group: "{{ mysql_exporter_system_group }}"
     mode: 0755
 
-- name: fix directory rights for {{ mysql_exporter_install_path | dirname }}
+- name: create ansible local facts directory
   ansible.builtin.file:
-    path: "{{ mysql_exporter_install_path | dirname }}"
+    dest: /etc/ansible/facts.d
     state: directory
-    owner: "{{ mysql_exporter_system_user }}"
-    group: "{{ mysql_exporter_system_group }}"
-    mode: 0755
-    recurse: true
+    owner: root
+    group: root
+    mode: 0775
+
+- name: merge mysql_exporter configuration between defaults and custom
+  ansible.builtin.set_fact:
+    mysql_exporter_service: "{{ mysql_exporter_defaults_service | combine(mysql_exporter_service, recursive=True) }}"
+    mysql_exporter_credentials: "{{ mysql_exporter_defaults_credentials | combine(mysql_exporter_credentials, recursive=True) }}"
 
 ...

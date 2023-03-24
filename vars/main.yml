@@ -19,6 +19,31 @@ mysql_exporter_requirements:
 
 mysql_exporter_defaults_directory: /etc/default
 
+mysql_exporter_defaults_credentials:
+  client:
+    hostname: ""
+    port: ""
+    socket: ""
+    username: ""
+    password: ""
+
+mysql_exporter_defaults_service:
+  log:
+    level: info
+    format: ""
+  web:
+    listen_address: "127.0.0.1:9104"
+    telemetry_path: /metrics
+  exporter:
+    lock_wait_timeout: ""                  # 2
+    log_slow_filter: ""                    # true | false
+  timeout_offset: ""                       # 0.25
+  config:
+    my_cnf: "{{ mysql_exporter_config_dir }}/mysql_exporter.cnf"
+  raw_flags: {}
+
+mysql_exporter_defaults_collectors: []
+
 # ------------------------------------------------------------------------
 
 go_arch_map:

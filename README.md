@@ -12,7 +12,7 @@ Ansible role to install and configure [mysqld_exporter](https://github.com/prome
 [ci]: https://github.com/bodsch/ansible-mysql-exporter/actions
 [issues]: https://github.com/bodsch/ansible-mysql-exporter/issues?q=is%3Aopen+is%3Aissue
 [releases]: https://github.com/bodsch/ansible-mysql-exporter/releases
-[quality]: https://galaxy.ansible.com/bodsch/dovecot
+[quality]: https://galaxy.ansible.com/bodsch/mysql_exporter
 
 
 ## Operating systems
@@ -24,7 +24,6 @@ Tested on
     - Debian 10 / 11
     - Ubuntu 20.04
 * RedHat based
-    - CentOS 8 (**not longer supported**)
     - Alma Linux 8
     - Rocky Linux 8
     - OracleLinux 8
@@ -42,48 +41,76 @@ If you want to use something stable, please use a [Tagged Version](https://githu
 ## Configuration
 
 ```yaml
-mysql_exporter_version: "0.13.0"
+mysql_exporter_version: "0.14.0"
 
 mysql_exporter_release_download_url: https://github.com/prometheus/mysqld_exporter/releases
 
 mysql_exporter_system_user: mysql_exporter
 mysql_exporter_system_group: mysql_exporter
 
-mysql_exporter_listen_address: 127.0.0.1
-mysql_exporter_listen_port: 9104
-mysql_exporter_telemetry_path: /metrics
+mysql_exporter_direct_download: false
 
-mysql_exporter_config:
-  data_source_name: "" 
+mysql_exporter_service: {}
 
-mysql_exporter_logging:
-  # debug, info, warn, error, fatal
-  level: info
-  # Declaration is unclear.
-  # Although specified in usage, it leads to an unbootable service when used.
-  # "logger:syslog?appname=bob&local=7" or "logger:stdout?json=true"
-  # format: logger:stderr
+mysql_exporter_credentials:
+  client:
+    hostname: ""
+    port: ""
+    socket: ""
+    username: ""
+    password: ""
 
-mysql_exporter_enabled_collectors: []
+mysql_exporter_collectors: []
 ```
 
-### data source name
+### service configuration
+
+```yaml
+mysql_exporter_service:
+  log:
+    level: info
+    format: ""
+  web:
+    listen_address: "127.0.0.1:9104"
+    telemetry_path: /metrics
+  exporter:
+    lock_wait_timeout: ""                  # 2
+    log_slow_filter: ""                    # true | false
+  timeout_offset: ""                       # 0.25
+  config:
+    my_cnf: "{{ mysql_exporter_config_dir }}/mysql_exporter.cnf"
+  raw_flags: {}
+```
+
+### data source credentials
 
 Using UNIX domain sockets and authentication:
+
+
 ```yaml
-mysql_exporter_config:
-  data_source_name: "prometheus:nopassword@unix(/run/mysqld/mysqld.sock)/"
+mysql_exporter_credentials:
+  client:
+    socket: "/run/mysqld/mysqld.sock"
+    username: "prometheus"
+    password: "nopassword"
 ```
 
 or using a TCP connection and password authentication:
 
 ```yaml
-mysql_exporter_config:
-  data_source_name: "prometheus:nopassword@hostname:port/dbname"
+mysql_exporter_credentials:
+  client:
+    hostname: "hostname"
+    port: "3306"
+    socket: "dbname"
+    username: "prometheus"
+    password: "nopassword"
 ```
 
 
 ### collectors
+
+ [see also](https://github.com/prometheus/mysqld_exporter#collector-flags)
 
 | collector name | description |
 | :---           | :----        |
@@ -127,7 +154,7 @@ mysql_exporter_config:
 #### Example
 
 ```yaml
-mysql_exporter_enabled_collectors:
+mysql_exporter_collectors:
   - global_variables
   - engine_innodb_status
 ```

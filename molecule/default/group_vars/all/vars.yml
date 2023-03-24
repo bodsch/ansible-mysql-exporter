@@ -1,9 +1,15 @@
 ---
 
-mysql_exporter_logging:
-  level: debug
-
-mysql_exporter_config:
-  data_source_name: "monitoring:8WOMmRWWYHPR@unix(/run/mysqld/mysqld.sock)/"
-
+mysql_exporter_credentials:
+  client:
+    hostname: "127.0.0.1"
+    port: 3306
+    socket: "schnoc"
+    username: "foo"
+    password: "bar"
+  server1:
+    hostname: ""
+    socket: ""
+    username: ""
+    password: ""
 ...

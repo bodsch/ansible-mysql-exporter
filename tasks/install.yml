@@ -16,16 +16,16 @@
         - daemon-reload
         - restart mysql_exporter
 
-    - name: create mysql-exporter run configuration
-      ansible.builtin.template:
-        src: "default/mysql-exporter.j2"
-        dest: "{{ mysql_exporter_defaults_directory }}/mysql-exporter"
-        force: true
-        owner: root
-        group: "{{ mysql_exporter_system_group }}"
-        mode: 0640
-      notify:
-        - restart mysql_exporter
+#     - name: create mysql-exporter run configuration
+#       ansible.builtin.template:
+#         src: "default/mysql-exporter.j2"
+#         dest: "{{ mysql_exporter_defaults_directory }}/mysql-exporter"
+#         force: true
+#         owner: root
+#         group: "{{ mysql_exporter_system_group }}"
+#         mode: 0640
+#       notify:
+#         - restart mysql_exporter
 
 # - name: create systemd service unit
 #   ansible.builtin.template:
