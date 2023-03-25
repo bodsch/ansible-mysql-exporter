@@ -11,10 +11,12 @@ display = Display()
 class FilterModule(object):
     """
     """
+
     def filters(self):
         return {
             'type': self.var_type,
             'valid_credentials': self.valid_credentials,
+            'has_credentials': self.has_credentials,
         }
 
     def var_type(self, var):
@@ -46,6 +48,25 @@ class FilterModule(object):
                 data = None
 
         result = data
+
+        display.v(f"= result: {result}")
+
+        return result
+
+    def has_credentials(self, data):
+        """
+        """
+        result = {}
+
+        if isinstance(data, dict):
+            display.v(f"valid_credentials({data})")
+
+            for k, v in data.items():
+                is_valid = self.valid_credentials(v)
+
+                if is_valid:
+                    result[k] = {}
+                    result[k] = is_valid
 
         display.v(f"= result: {result}")
 

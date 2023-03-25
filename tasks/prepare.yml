@@ -82,13 +82,13 @@
   when:
     - mysql_exporter_system_user != "root"
   block:
-    - name: Create mysql_exporter group
+    - name: create mysql_exporter group
       ansible.builtin.group:
         name: "{{ mysql_exporter_system_group }}"
         state: present
         system: true
 
-    - name: Create mysql_exporter user
+    - name: create mysql_exporter user
       ansible.builtin.user:
         name: "{{ mysql_exporter_system_user }}"
         groups: "{{ mysql_exporter_system_group }}"
@@ -117,6 +117,24 @@
 - name: merge mysql_exporter configuration between defaults and custom
   ansible.builtin.set_fact:
     mysql_exporter_service: "{{ mysql_exporter_defaults_service | combine(mysql_exporter_service, recursive=True) }}"
-    mysql_exporter_credentials: "{{ mysql_exporter_defaults_credentials | combine(mysql_exporter_credentials, recursive=True) }}"
+    mysql_exporter_credentials: "{{ mysql_exporter_defaults_credentials | combine(mysql_exporter_credentials, recursive=True) | has_credentials }}"
+
+- name: warn if no database credentials have been configured.
+  when:
+    - mysql_exporter_credentials | default({}) | count == 0
+  block:
+    - name: warn if no database credentials have been configured.
+      ansible.builtin.fail:
+        msg: |
+          No database credentials have been configured.
+          Therefore, it cannot be guaranteed that the exporter will work as expected.
+
+          From a security point of view, it makes sense to create and use appropriate credentials.
+      ignore_errors: true
+
+    - name: wait 5 seconds to realise the message
+      delegate_to: localhost
+      ansible.builtin.wait_for:
+        timeout: 5
 
 ...

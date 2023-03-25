@@ -59,7 +59,8 @@ OPTIONS="
   --timeout-offset {{ mysql_exporter_service.timeout_offset }} \
   {% endif %}
   {% if mysql_exporter_service.config.my_cnf is defined and
-        mysql_exporter_service.config.my_cnf | string | length > 0 %}
+        mysql_exporter_service.config.my_cnf | string | length > 0 and
+        mysql_exporter_credentials | default({}) | count > 0 %}
   --config.my-cnf {{ mysql_exporter_service.config.my_cnf }} \
   {% endif %}
   {# collectors #}
