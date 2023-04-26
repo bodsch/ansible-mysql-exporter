@@ -2,10 +2,19 @@
 
 mysql_exporter_version: latest
 
-mysql_exporter_config:
-  data_source_name: "monitoring:8WOMmRWWYHPR@unix(/run/mysqld/mysqld.sock)/"
+mysql_exporter_service:
+  log:
+    # debug, info, warn, error, fatal
+    level: debug
+  web:
+    listen_address: "127.0.0.1:9104"
 
-mysql_exporter_logging:
-  level: debug
+mysql_exporter_credentials:
+  client:
+    hostname: "127.0.0.1"
+    port: 3306
+    socket: "/run/mysqld/mysqld.sock"
+    username: "monitoring"
+    password: "8WOMmRWWYHPR"
 
 ...

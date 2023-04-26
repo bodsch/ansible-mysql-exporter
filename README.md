@@ -15,6 +15,34 @@ Ansible role to install and configure [mysqld_exporter](https://github.com/prome
 [quality]: https://galaxy.ansible.com/bodsch/mysql_exporter
 
 
+If `latest` is set for `mysql_exporter_version`, the role tries to install the latest release version.  
+**Please use this with caution, as incompatibilities between releases may occur!**
+
+The binaries are installed below `/usr/local/bin/mysql_exporter/${mysql_exporter_version}` and later linked to `/usr/bin`. 
+This should make it possible to downgrade relatively safely.
+
+The downloaded archive is stored on the Ansible controller, unpacked and then the binaries are copied to the target system.
+The cache directory can be defined via the environment variable `CUSTOM_LOCAL_TMP_DIRECTORY`. 
+By default it is `${HOME}/.cache/ansible/mysql_exporter`.
+If this type of installation is not desired, the download can take place directly on the target system. 
+However, this must be explicitly activated by setting `mysql_exporter_direct_download` to `true`.
+
+## Requirements & Dependencies
+
+Ansible Collections
+
+- [bodsch.core](https://github.com/bodsch/ansible-collection-core)
+- [bodsch.scm](https://github.com/bodsch/ansible-collection-scm)
+
+```bash
+ansible-galaxy collection install bodsch.core
+ansible-galaxy collection install bodsch.scm
+```
+or
+```bash
+ansible-galaxy collection install --requirements-file collections.yml
+```
+
 ## Operating systems
 
 Tested on

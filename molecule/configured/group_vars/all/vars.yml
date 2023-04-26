@@ -11,13 +11,13 @@ mysql_exporter_collectors:
   - global_variables
   - engine_innodb_status
 
-#mysql_exporter_credentials:
-#  client:
-#    hostname: "127.0.0.1"
-#    port: 3306
-#    socket: "/run/mysqld/mysqld.sock"
-#    username: "monitoring"
-#    password: "8WOMmRWWYHPR"
+mysql_exporter_credentials:
+  client:
+    hostname: "127.0.0.1"
+    port: 3306
+    socket: "/run/mysqld/mysqld.sock"
+    username: "monitoring"
+    password: "8WOMmRWWYHPR"
 #  server1:
 #    hostname: ""
 #    socket: ""

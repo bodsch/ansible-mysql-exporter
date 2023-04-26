@@ -14,14 +14,9 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'type': self.var_type,
             'valid_credentials': self.valid_credentials,
             'has_credentials': self.has_credentials,
         }
-
-    def var_type(self, var):
-        ''' ... '''
-        return type(var).__name__
 
     def valid_credentials(self, data):
         """

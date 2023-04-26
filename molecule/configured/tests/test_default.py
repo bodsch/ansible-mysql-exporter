@@ -107,14 +107,40 @@ def test_directories(host, directories):
     assert d.exists
 
 
-@pytest.mark.parametrize("files", [
-    "/etc/mysql_exporter/mysql_exporter.cnf",
-    "/etc/default/mysql-exporter"
-])
-def test_files(host, files):
-    f = host.file(files)
-    assert f.exists
-    assert f.is_file
+def test_files(host, get_vars):
+    """
+    """
+    distribution = host.system_info.distribution
+    release = host.system_info.release
+
+    print(f"distribution: {distribution}")
+    print(f"release     : {release}")
+
+    version = local_facts(host).get("version")
+
+    install_dir = get_vars.get("mysql_exporter_install_path")
+    defaults_dir = get_vars.get("mysql_exporter_defaults_directory")
+    config_dir = get_vars.get("mysql_exporter_config_dir")
+
+    if 'latest' in install_dir:
+        install_dir = install_dir.replace('latest', version)
+
+    files = []
+    files.append("/usr/bin/mysql-exporter")
+
+    if install_dir:
+        files.append(f"{install_dir}/mysql-exporter")
+    if defaults_dir and not distribution == "artix":
+        files.append(f"{defaults_dir}/mysql-exporter")
+    if config_dir:
+        files.append(f"{config_dir}/mysql_exporter.cnf")
+
+    print(files)
+
+    for _file in files:
+        f = host.file(_file)
+        assert f.exists
+        assert f.is_file
 
 
 def test_user(host, get_vars):
@@ -143,16 +169,12 @@ def test_open_port(host, get_vars):
 
     if isinstance(_service, dict):
         _web = _service.get("web", {})
-
         listen_address = _web.get("listen_address")
-    else:
-        listen_address = "0.0.0.0:9104"
+
+    if not listen_address:
+        listen_address = "127.0.0.1:9104"
+
+    print(listen_address)
 
     service = host.socket(f"tcp://{listen_address}")
     assert service.is_listening
-
-    # address = get_vars.get("mysql_exporter_listen_address")
-    # port = get_vars.get("mysql_exporter_listen_port")
-    #
-    # service = host.socket(f"tcp://{address}:{port}")
-    # assert service.is_listening

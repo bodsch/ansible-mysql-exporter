@@ -1,7 +1,7 @@
 #jinja2: trim_blocks: True, lstrip_blocks: True
 ; {{ ansible_managed }}
 {% macro credentials(data) %}
-{% if data | type == "dict" %}
+{% if data | bodsch.core.type == "dict" %}
   {% if data.hostname is defined and
         data.hostname | string | length > 0 %}
 host      = {{ data.hostname }}
@@ -29,7 +29,7 @@ password  = {{ data.password }}
 {% endmacro %}
 
 {% for key, value in mysql_exporter_credentials.items() %}
-  {% if value | type == 'dict' %}
+  {% if value | bodsch.core.type == 'dict' %}
     {% if value | valid_credentials %}
     {% if key == 'client' %}
 [{{ key }}]

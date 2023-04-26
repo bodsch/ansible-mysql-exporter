@@ -38,4 +38,11 @@
 #     - daemon-reload
 #     - restart mysql_exporter
 
+
+- name: create custom fact file
+  bodsch.core.facts:
+    name: mysql_exporter
+    facts:
+      version: "{{ mysql_exporter_version }}"
+
 ...
