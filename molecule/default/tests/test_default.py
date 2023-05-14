@@ -97,6 +97,13 @@ def get_vars(host):
     return result
 
 
+def local_facts(host):
+    """
+      return local facts
+    """
+    return host.ansible("setup").get("ansible_facts").get("ansible_local").get("mysql_exporter")
+
+
 @pytest.mark.parametrize("directories", [
     "/etc/mysql_exporter",
     "/usr/local/bin/mysql_exporter"
