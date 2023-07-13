@@ -3,6 +3,8 @@
 
 Ansible role to install and configure [mysqld_exporter](https://github.com/prometheus/mysqld_exporter).
 
+> Further development of this Ansible role has been moved to Collection [bodsch.prometheus](https://github.com/bodsch/ansible-collection-prometheus).
+> **This repository will therefore no longer be actively maintained.**
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-mysql-exporter/main.yml?branch=main)][ci]
 [![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-mysql-exporter)][issues]
